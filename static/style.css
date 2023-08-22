@@ -1,0 +1,23 @@
+body {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.t {
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.c1 {
+    font-size: 20pt;
+    color:red;
+}
+
+.i1 {
+    font-size: 50pt;
+    color:blue;
+}
+
+.i2 {
+    font-size: 20pt;
+    color:green;
+    border-radius: 20%;    
+}

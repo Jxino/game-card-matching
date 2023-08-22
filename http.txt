@@ -1,0 +1,38 @@
+HTTP 프로토콜 개요
+    URL: http://naver.com:80/folder/list.api?x=0&y=2
+        프로토콜: http, https
+        호스트명: naver.com -> DNS 조회(IP 주소)
+        포트 번호: 80, 443
+        URI: /folder/list.api(서버에서 정한 상대적인 위치)
+        QUERY: x=0&y=2
+    URL: http://127.0.0.1:5000/login(127.0.0.1은 로컬 호스트를 의미함)
+    Get method와 Post method가 있음
+
+    $ telnet 127.0.0.1 5000
+    GET /login HTTP/1.0
+
+    200 OK or 404 NOT FOUND  
+    Header:xxx
+    Header:yyy
+    
+    HTML BODY
+    $ telnet 127.0.0.1 5000
+    POST /login HTTP/1.0
+    Content-Length: 11
+    Content-Type: application/http-form-encoded
+
+    x=y&a=b&w=u
+
+
+API 서버 만들기
+    pip install fastapi // 파이썬으로 쉽게 API 서버를 만들 수 있는 프레임워크
+    pip install uvicorn // 서버 프로그램, FASTAPI를 구동하는 프로그램
+
+    main.py // 이 파일 속에 API 서버 내용을 기재해준다
+            // 라우트(end point, URI)별로 각각의 기능을 프로그램해준다
+    static/style.css // HTML 스타일을 정의하는 파일
+    static/index.html // HTML 파일 저장
+
+    $ uvicorn main:app --reload // main.py 속에 app라는 서버를 reload 모드로 실행시킨다
+    웹 브라우저에서 http://127.0.0.1:8000/를 접속해 본다
+    추가적으로 자동 생성된 API 규정 문서를 보려면 http://127.0.0.1:8000/docs를 보면 됨
