@@ -28,6 +28,15 @@ API 서버 만들기
     pip install fastapi // 파이썬으로 쉽게 API 서버를 만들 수 있는 프레임워크
     pip install uvicorn // 서버 프로그램, FASTAPI를 구동하는 프로그램
 
+    서버사이드프레임웍 종류: 
+        DJANGO: python 웹 서비스 프레임워크
+        FLASK: python API 프레임워크
+        FASTAPI: 파이썬 API 서버 프레임워크
+        EXPRESS: node.js에서 동작하는 javascript 서버 프레임워크 == FLASK
+        REACT: node.js에서 동작하는 javascript 서버 프레임워크 == DJANGO
+        SVELTE: node.js에서 동작하는 javascript 서버 프레임워크 == EXPRESS
+        SPRINGBOOT: java 서버 프레임워크 == REACT == DJANGO
+
     main.py // 이 파일 속에 API 서버 내용을 기재해준다
             // 라우트(end point, URI)별로 각각의 기능을 프로그램해준다
     static/style.css // HTML 스타일을 정의하는 파일
@@ -36,3 +45,41 @@ API 서버 만들기
     $ uvicorn main:app --reload // main.py 속에 app라는 서버를 reload 모드로 실행시킨다
     웹 브라우저에서 http://127.0.0.1:8000/를 접속해 본다
     추가적으로 자동 생성된 API 규정 문서를 보려면 http://127.0.0.1:8000/docs를 보면 됨
+
+HTML, js, CSS, FASTAPI.py 작성
+    HTML은 DOM 객체로 구성된다.
+    HTML은 XML의 한 형태이다.<TAG 방식><!DOCTYPE html>
+    HTML은 head와 body가 있다.
+    HTML head에서 .css 파일과 .js 파일을 연결한다
+    HTML DOM 객체는 id를 부여할 수 있고, class 명을 부여할 수 있다.
+    HTML DOM 객체의 id를 이용해서 javascript에서 객체에 대한 동적인 조작을 할 수 있다.
+    HTML DOM 객체의 class를 이용해서 .css 파일에서 style을 지정할 수 있다.
+    HTML의 모든 요소가 로딩된 후 window.onload event가 발생한다.
+    HTML DOM 객체는 .onclick, .onchange, .onmouseout, .onmouseenter 등의 다양한 event가 발생한다.
+    HTML DOM 객체를 javascript에서 쓰려면 document.getElementById(id) 함수를 이용해서 객체를 받는다.
+    HTML 웹 페이지에서 서버로 request를 날리는 것을 ajax라고 칭한다.
+    일반적으로 ajax 호출은 json 객체로 주고받는다.
+    ajax 호출 시 서버의 api route url과 json data, callback 함수를 제공한다.
+    ajax 호출 완료 시 callback 함수가 호출된다.(비동기, ajax 호출은 휘리릭 지나가버리고 나중에 callback이 호출됨)
+
+신경쇠약 게임 로직
+    states[16] = [hide] 
+    cards[16] = random card()
+    # player = 사용자: 0, 기계: 1
+    scores[2] = 사용자: 0, 기계: 0
+    player = 0
+    while True:
+        if player = 1:
+            x, y = random(not done)
+        else:
+            x, y = 사용자로부터 두 개를 입력받고,
+        state of x = show, state of y = show
+        if card of x == card of y:
+            score[player] += 1
+            state of x = done, state of y = done
+        else:
+            state of x = hide, state of y = hide
+            player = (player + 1) % 2 // 토글
+        if all done(states):
+            print("winner")
+            break
