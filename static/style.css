@@ -2,26 +2,6 @@ body {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
-.t {
-    font-family: 'Times New Roman', Times, serif;
-}
-
-.c1 {
-    font-size: 20pt;
-    color:red;
-}
-
-.i1 {
-    font-size: 50pt;
-    color:blue;
-}
-
-.i2 {
-    font-size: 20pt;
-    color:green;
-    border-radius: 20%;    
-}
-
 .table {
     border-width: 1px;
 }
@@ -30,6 +10,6 @@ body {
     width: 99px;
     height: 136px;
     /* border-radius: 20%; */
-    background-color: aqua;
-    font-size: 24pt;
+    /* background-color: aqua;
+    font-size: 24pt; */
 }
