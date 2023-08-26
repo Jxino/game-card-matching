@@ -3,31 +3,6 @@ function $(id) {
     return document.getElementById(id);
 }
 
-// ajax.js
-
-function sendAjaxRequest(url, data, callback) {
-    // Fetch API를 사용하여 AJAX 요청 보내기
-    fetch(url, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-    })
-    // .then(function (response) {
-    //     if (!response.ok) {
-    //         throw new Error("Network response was not ok");
-    //     }
-    //     return response.json(); // JSON 데이터로 응답 처리
-    // })
-    .then(function (responseData) {
-        callback(null, responseData.text()); // 성공적으로 데이터를 받았을 때 콜백 호출
-    })
-    .catch(function (error) {
-        callback(error, null); // 오류 처리
-    });
-}
-
 function sendPostRequest(url, data, callback) {
     var xhr = new XMLHttpRequest();
     xhr.open("POST", url, true);
@@ -42,26 +17,6 @@ function sendPostRequest(url, data, callback) {
 
     var json_str = JSON.stringify(data);
     xhr.send(json_str); // 서버로 request를 날림
-}
-
-function to_upper(y_value) {
-    var item = { // json 객체
-        y_value: y_value
-    };
-    var api_url = "http://127.0.0.1:8000/upper.api"; // end point, route  
-    sendPostRequest(api_url, item, function (response) {
-        console.log('Response:', response);
-        $("y").value += response.result;
-    });    
-}
-
-function click_function() {
-    to_upper($("y").value);
-    console.log($("y").value);
-    // $("t").innerText = $("y").value;
-    $("t").innerHTML = $("y").value + "<u>" + $("y").value + "</u>" + "<i>" + $("y").value + "</i>";
-    $("y").style.fontFamily = "Times New Roman";
-    $("t").style.fontFamily = "Times New Roman";
 }
 
 function shuffleArray(array) {
@@ -90,45 +45,120 @@ function initialize() {
         // player = 사용자: 0, 기계: 1
     scores = [0, 0];
     player = USER;
+    for (var i = 0; i < cards.length; i++) {
+        $(i + "").src = "X.png";
+    }
+    $("user_score").innerText = "0";
+    $("machine_score").innerText = "0";
 }
 
-function play() {
-    if (player == MACHINE) {
-        var x = Math.floor(Math.random() * (cards.length)); // 0부터 15 사이의 난수
-        while (states[x] == DONE) {
-            x = (x + 1) % cards.length;
-        }
-        states[x] = SHOW;
-        var y = Math.floor(Math.random() * (cards.length)); // 0부터 15 사이의 난수
-        while (states[y] == DONE) {
-            y = (y + 1) % cards.length;
-        }
-        states[y] = SHOW;
-    } else {
-        // x, y = 사용자로부터 두 개를 입력받고;
-        states[x] = SHOW;
-        states[y] = SHOW;
+function check_finished() {
+    console.log("Check finished");
+    var DONE_count = 0;
+    for (var i = 0; i < states.length; i++) {
+        if (states[i] == DONE) DONE_count += 1;
     }
-    if (cards[x] == cards[y]) {
-        scores[player] += 1;
-        states[x] = DONE;
-        states[y] = DONE;
-    } else {
-        states[x] = HIDE;
-        states[y] = HIDE;
-        player = (player + 1) % 2; // 토글
-    }
-    
-    var none_done_found = false; 
-    for (var i = 0; i < cards.length; i++) {
-        if (states[i] != DONE) {
-            none_done_found = true;
-            break;
-        }
-    }
-    if (! none_done_found) {
-        console.log(player + " is winner!");
+    if (DONE_count == states.length) {
+        alert("Game Over!");
         initialize();
+        return true;
+    }
+    return false;
+}
+
+function machine_second_card() {
+    console.log("Machine second card");
+    // DONE이 아닌 card를 임의로 한 장 열고
+    var x = Math.floor(Math.random() * (cards.length)); // 0부터 15 사이의 난수
+    while (states[x] == DONE || states[x] == SHOW) {
+        x = (x + 1) % cards.length;
+    }
+    states[x] = SHOW;
+    $(x + "").src = cards[x] + ".png"; // show card    
+    // 1초 후에 만약에 매칭하면 DONE으로 마크하면서 뒤집고
+    // 그렇지 않으면 1초 후에 그냥 뒤집는다.
+    // 다음 플레이어를 USER으로 바꿔준다.
+    check_match();
+}
+
+function call_machine() {
+    console.log("Call Machine");
+    // DONE이 아닌 card를 임의로 하나 열고
+    var x = Math.floor(Math.random() * (cards.length)); // 0부터 15 사이의 난수
+    while (states[x] == DONE || states[x] == SHOW) {
+        x = (x + 1) % cards.length;
+    }
+    states[x] = SHOW;
+    $(x + "").src = cards[x] + ".png"; // show card 
+    // 1초 후에 또 한 장을 더 연다.
+    setTimeout(machine_second_card, 1000);
+}
+
+function check_match() {
+    console.log("Check match");
+    var open_cards = [];
+    for (var i = 0; i < 16; i++) {
+        if (states[i] == SHOW) {
+            open_cards.push(i);
+        }
+    }
+    if (open_cards.length == 1) {
+        console.log("Open card is 1");
+        return;
+    }
+    console.log(open_cards);
+    console.log(states);
+    console.log(cards);
+    if (cards[open_cards[0]] == cards[open_cards[1]]) {
+        setTimeout(function() {
+            states[open_cards[0]] = DONE;
+            states[open_cards[1]] = DONE;
+            // $(open_cards[0] + "").value = ""; // hide card
+            // $(open_cards[1] + "").value = ""; // hide card
+            $(open_cards[0] + "").src = "Y.png";
+            $(open_cards[1] + "").src = "Y.png";
+            console.log("same");
+            if (player == MACHINE) {
+                // 기계의 점수를 올려 준다.
+                scores[MACHINE] += 1;
+                $("machine_score").innerText = scores[MACHINE] + "";
+                player = USER;
+                $("cur_player").innerText = "사용자";
+            } else { // 사용자의 점수를 올려 준다.
+                scores[USER] += 1;
+                $("user_score").innerText = scores[USER] + "";
+                player = MACHINE;
+                $("cur_player").innerText = "기계";
+            }           
+            console.log("player: " + player);
+            if (! check_finished()) {
+                if (player == MACHINE) {
+                    setTimeout(call_machine, 1000);
+                }        
+            }            
+        }, 1000);
+    } else {
+        setTimeout(function() {
+            states[open_cards[0]] = HIDE;
+            states[open_cards[1]] = HIDE;
+            $(open_cards[0] + "").src = "X.png"; // hide card
+            $(open_cards[1] + "").src = "X.png"; // hide card
+            console.log("different");
+            // player = (player == MACHINE) ? USER : MACHINE;
+            if (player == MACHINE) {
+                player = USER;
+                $("cur_player").innerText = "사용자";
+            } else {
+                player = MACHINE;
+                $("cur_player").innerText = "기계";
+            }
+            console.log("player: " + player);
+            if (! check_finished()) {
+                if (player == MACHINE) {
+                    setTimeout(call_machine, 1000);
+                }        
+            }
+        }, 1000);
     }
 }
 
@@ -157,39 +187,8 @@ function card_clicked(card_id) {
         return;
     }
     states[parseInt(card_id)] = SHOW;
-    $(card_id).value = cards[parseInt(card_id)]; // show card
-    var open_cards = [];
-    for (var i = 0; i < 16; i++) {
-        if (states[i] == SHOW) {
-            open_cards.push(i);
-        }
-    }
-    if (open_cards.length == 1) {
-        console.log("Open card is 1");
-        return;
-    }
-    console.log(open_cards);
-    console.log(states);
-    console.log(cards);
-    if (cards[open_cards[0]] == cards[open_cards[1]]) {
-        setTimeout(function() {
-            states[open_cards[0]] = DONE;
-            states[open_cards[1]] = DONE;
-            $(open_cards[0] + "").value = ""; // hide card
-            $(open_cards[1] + "").value = ""; // hide card
-            $(open_cards[0] + "").style.backgroundColor = "gray";
-            $(open_cards[1] + "").style.backgroundColor = "gray";
-            console.log("same");
-        }, 1000);
-    } else {
-        setTimeout(function() {
-            states[open_cards[0]] = HIDE;
-            states[open_cards[1]] = HIDE;
-            $(open_cards[0] + "").value = ""; // hide card
-            $(open_cards[1] + "").value = ""; // hide card
-            console.log("different");
-        }, 1000);
-    }
+    $(card_id).src = cards[parseInt(card_id)] + ".png"; // show card
+    check_match();
 }
 
 window.onload = function() { // HTML이 로딩이 완료되면 호출됨
